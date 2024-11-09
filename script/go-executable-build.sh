@@ -11,6 +11,7 @@ echo -e "Command executed is: $0\nName to binary: $1\nDirectory reference: $2\n"
 
 export package=$2
 export os="linux"
+
 export arch="amd64"
 export out_filename=$1
 
@@ -39,7 +40,12 @@ fi
 if [ ! -d "./build" ]; then
     echo "Build directory doesn't exist, creating it now..."
     mkdir ./build
-fi
+else 
+	echo "Build directory already exists."
+	chmod +x ./build
+	rm -r ./build
+	mkdir ./build
+fi	
 
 chmod +w ./build
 

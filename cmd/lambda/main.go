@@ -12,8 +12,8 @@ func main() {
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {	
 	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Body:       fmt.Sprintf("Lambda online, call is true"),
+		StatusCode: 201,
+		Body:       fmt.Sprintf("Test update lambda"),
 	}, nil	
 }
 
