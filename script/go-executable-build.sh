@@ -1,51 +1,68 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash 
 
-# verify if user stay minimum arguments
+# Verifica se o usuário enviou o número mínimo de argumentos
 if [ "$#" -ne 2 ]; then
-	echo "Usage: $0 [OPTION] name file [OPTION] dir main.go"
-	exit 1
+    echo "Usage: $0 [OPTION] name file [OPTION] dir main.go"
+    exit 1
 fi
 
-echo "command executed is $0 \n Name to binary is :$1\n Directorectory reference is: $2\n"
+# Exibe os parâmetros recebidos pelo script
+echo -e "Command executed is: $0\nName to binary: $1\nDirectory reference: $2\n"
 
 export package=$2
-
 export os="linux"
 export arch="amd64"
 export out_filename=$1
 
-# verify if user send argument in script
+# Verifica se o argumento do pacote Go foi fornecido
 if [[ -z "$package" ]]; then
-	echo "argument not found, please send $0 value"
-	exit 1
+    echo "Argument for Go package not found, please provide it."
+    exit 1
 fi
 
-# make build golang binary
+# Tenta compilar o binário Go
 env GOOS=$os GOARCH=$arch go build -o $out_filename $package
 
+# Verifica se a compilação foi bem-sucedida
 if [ $? -ne 0 ]; then
-   	echo 'An error has occurred! Aborting the script execution...'
-	exit 1
+    echo 'An error occurred during the build! Aborting the script execution...'
+    exit 1
 fi
 
-# verify is foulder build exist, if not exist then create
-if [ -e "build"]; then
-	echo "Building directory doesn't exist, its create"
-	mkdir build
+# Verifica se o binário foi gerado com sucesso
+if [ ! -f "$out_filename" ]; then
+    echo "Erro: binary $out_filename not found"
+    exit 1
 fi
 
-# create zip file with name send in argument script
+# Verifica se o diretório 'build' existe; se não, cria-o
+if [ ! -d "./build" ]; then
+    echo "Build directory doesn't exist, creating it now..."
+    mkdir ./build
+fi
+
+chmod +w ./build
+
+# Cria o arquivo zip contendo o binário
+echo "executing: zip 'build/${out_filename}.zip' $out_filename"
 zip "build/${out_filename}.zip" $out_filename
-echo 'Zip is success'
 
-# remove binary none zip in root foulder
+# Verifica se o zip foi criado com sucesso
+if [ $? -eq 0 ]; then
+    echo 'Zip was created successfully.'
+else
+    echo 'An error occurred while creating the zip file.'
+    exit 1
+fi
+
+# Remove o binário que não está comprimido
 rm -f $out_filename
 
-echo 'Binary file is removed'
+# Confirma que o binário foi removido
+echo 'Binary file removed.'
 echo 'Build successful!'
+
 exit 0
-
-
 
 
 
